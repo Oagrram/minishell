@@ -88,16 +88,19 @@ t_env	*swith_data(char **env, int j)
 	while (++j < i)
 	{
 		envline = ft_strsplit(env[j], '=');
-		if ((p->name = ft_memalloc(ft_strlen(envline[0]))) == NULL)
-			exit(1);
-		p->name = ft_strdup(envline[0]);
-		if ((p->value = ft_memalloc(ft_strlen(envline[1]))) == NULL)
-			exit(1);
-		p->value = ft_strdup(envline[1]);
-		if ((j + 1) != i)
-			if ((p->next = ft_memalloc(sizeof(t_env))) == NULL)
+		if (envline[1])
+		{
+			if ((p->name = ft_memalloc(ft_strlen(envline[0]))) == NULL)
 				exit(1);
-		p = p->next;
+			p->name = ft_strdup(envline[0]);
+			if ((p->value = ft_memalloc(ft_strlen(envline[1]))) == NULL)
+				exit(1);
+			p->value = ft_strdup(envline[1]);
+			if ((j + 1) != i)
+				if ((p->next = ft_memalloc(sizeof(t_env))) == NULL)
+					exit(1);
+			p = p->next;
+		}
 		ft_bonus_freedoubledem(envline);
 	}
 	return (head);

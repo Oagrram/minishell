@@ -12,18 +12,29 @@
 
 #include "minishell.h"
 
-int			ft_chdir(char *path)
+int			srch_in_list(t_env *p, char *found)
 {
-	struct stat *statbuf;
-
-	statbuf = NULL;
-	if (chdir(path) == -1)
+	while (p)
 	{
-		if (stat(path, statbuf) == -1)
-		{
-			printf("error\n");
-			return (1);
-		}
+		if (!(ft_strcmp(p->name, found)) && p->value)
+			return (0);
+		p = p->next;
+	}
+	return (1);
+}
+
+int			ft_chdir_acses(char *path)
+{
+	if (access(path, F_OK))
+	{
+		ft_putendl("Does not exist");
+		return (1);
+	}
+	else if (chdir(path) == -1)
+	{
+		ft_putstr(path);
+		ft_putendl(": Permission denied.");
+		return (1);
 	}
 	else
 		return (0);
@@ -39,25 +50,20 @@ void		ft_cd_old_pwd(t_env *head)
 	p = head;
 	oldpwd = NULL;
 	pwd = NULL;
+	if (srch_in_list(p, "OLDPWD"))
+	{
+		ft_putendl("OLDPWD: Undefined variable.");
+		return ;
+	}
 	while (p)
 	{
 		if (!(ft_strcmp(p->name, "OLDPWD")))
 		{
 			oldpwd = ft_strdup(p->value);
-			if (ft_chdir(oldpwd) == 1)
-			{
-				ft_memdel((void **)oldpwd);
-				return ;
-			}
 		}
 		if (!(ft_strcmp(p->name, "PWD")))
 			pwd = ft_strdup(p->value);
 		p = p->next;
-	}
-	if (!oldpwd)
-	{
-		printf (": No such file or directory.\n");
-		return;
 	}
 	p = head;
 	while (p)
@@ -78,12 +84,17 @@ void		ft_cd_old_pwd(t_env *head)
 
 void		ft_cd_previous(t_env *p)
 {
-	int 	i;
-	int 	j;
-	char 	*path;
+	int		i;
+	int		j;
+	char	*path;
 
 	i = -1;
 	j = 0;
+	if (srch_in_list(p, "PWD"))
+	{
+		ft_putendl("PWD: Undefined variable.");
+		return ;
+	}
 	while (p)
 	{
 		if (!(ft_strcmp(p->name, "PWD")))
@@ -95,41 +106,51 @@ void		ft_cd_previous(t_env *p)
 				path = ft_strdup("/");
 			else
 				path = ft_strsub(p->value, 0, j);
-			//ft_memdel((void **)p->value);
+			if (ft_chdir_acses(path))
+			{
+				ft_strdel(&(path));
+				return ;
+			}
+			ft_strdel(&(p->value));
 			p->value = path;
-			// if (ft_chdir(oldpwd) == 1)
-			// {
-			// 	ft_memdel((void **)oldpwd);
-			// 	return ;
-			// }
 		}
 		p = p->next;
 	}
-	 chdir(p->value);
+}
+
+void		ft_cd_home(t_env *p)
+{
+	char	*path;
+	t_env	*head;
+
+	head = p;
+	path = NULL;
+	while (p)
+	{
+		if (!(ft_strcmp(p->name, "HOME")))
+			path = p->value;
+		p = p->next;
+	}
+	if (!path)
+	{
+		ft_putendl("HOME: Undefined variable.");
+		return ;
+	}
+	p = head;
+	if (ft_chdir_acses(path))
+		return ;
+	while (p)
+	{
+		if (!(ft_strcmp(p->name, "PWD")) && path)
+			p->value = path;
+		p = p->next;
+	}
 }
 
 int			ft_cd(t_env *head, char **line)
 {
-	char	*path;
-	t_env	*p;
-
-	p = head;
 	if (!line[1])
-	{
-		while (p->next)
-		{
-			if (!(ft_strcmp(p->name, "HOME")))
-				path = p->value;
-			p = p->next;
-		}
-		p = head;
-		while (p)
-		{
-			if (!(ft_strcmp(p->name, "PWD")) && path)
-				p->value = path;
-			p = p->next;
-		}
-	}
+		ft_cd_home(head);
 	else if (line[1] && !ft_strcmp(line[1], "-"))
 		ft_cd_old_pwd(head);
 	else if (line[1] && !(ft_strcmp(line[1], "../")))
