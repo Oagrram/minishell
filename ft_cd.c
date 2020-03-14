@@ -14,12 +14,27 @@
 
 int			srch_in_list(t_env *p, char *found)
 {
-	while (p)
+	printf("first\n");
+	while (p->next)
 	{
-		if (!(ft_strcmp(p->name, found)) && p->value)
-			return (0);
+		printf("first\n");
+		if (!(ft_strcmp(p->name, found)))
+		{
+			if (!p->value)
+			{
+				printf("i am return 2 \n");
+				printf("i am return 2 with p->val = %s\n",p->value);
+				return (2);
+			}
+			else
+			{
+				printf("i am return 0 n\n");
+				return (0);
+			}
+		}
 		p = p->next;
 	}
+	printf("i am return 1 with p->val = %s\n",p->value);
 	return (1);
 }
 
@@ -41,13 +56,13 @@ int			ft_chdir_acses(char *path)
 	return (0);
 }
 
-void		ft_cd_old_pwd(t_env *head)
+void		ft_cd_old_pwd(t_env **head)
 {
 	t_env	*p;
 	char	*oldpwd;
 	char	*pwd;
 
-	p = head;
+	p = *head;
 	oldpwd = NULL;
 	pwd = NULL;
 	if (srch_in_list(p, "OLDPWD"))
@@ -58,14 +73,12 @@ void		ft_cd_old_pwd(t_env *head)
 	while (p)
 	{
 		if (!(ft_strcmp(p->name, "OLDPWD")))
-		{
 			oldpwd = ft_strdup(p->value);
-		}
 		if (!(ft_strcmp(p->name, "PWD")))
 			pwd = ft_strdup(p->value);
 		p = p->next;
 	}
-	p = head;
+	p = *head;
 	while (p)
 	{
 		if (!(ft_strcmp(p->name, "PWD")))
@@ -82,12 +95,14 @@ void		ft_cd_old_pwd(t_env *head)
 	}
 }
 
-void		ft_cd_previous(t_env *p)
+void		ft_cd_previous(t_env **head)
 {
 	int		i;
 	int		j;
 	char	*path;
+	t_env 	*p;
 
+	p = *head;
 	i = -1;
 	j = 0;
 	if (srch_in_list(p, "PWD"))
@@ -118,14 +133,14 @@ void		ft_cd_previous(t_env *p)
 	}
 }
 
-void		ft_cd_home(t_env *p)
+void		ft_cd_home(t_env **head)
 {
 	char	*path;
-	t_env	*head;
+	t_env	*p;
 
-	head = p;
+	p = *head;
 	path = NULL;
-	while (p)
+	while (p->next)
 	{
 		if (!(ft_strcmp(p->name, "HOME")))
 			path = p->value;
@@ -136,18 +151,18 @@ void		ft_cd_home(t_env *p)
 		ft_putendl("HOME: Undefined variable.");
 		return ;
 	}
-	p = head;
+	p = *head;
 	if (ft_chdir_acses(path))
 		return ;
-	while (p)
+	while (p->next)
 	{
 		if (!(ft_strcmp(p->name, "PWD")) && path)
-			p->value = path;
+			p->value = ft_strdup(path);
 		p = p->next;
 	}
 }
 
-int			ft_cd(t_env *head, char **line)
+int			ft_cd(t_env **head, char **line)
 {
 	if (!line[1])
 		ft_cd_home(head);

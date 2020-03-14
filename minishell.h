@@ -25,5 +25,6 @@ typedef	struct	s_env
 	char			*value;
 	struct s_env	*next;
 }				t_env;
-int					ft_cd(t_env *head, char **line);
+int					srch_in_list(t_env *p, char *found);
+int					ft_cd(t_env **head, char **line);
 #endif
