@@ -191,7 +191,7 @@ int		execut_builtins(char **line, t_env **head)
 	if (!ft_strcmp(line[0], "echo"))
 		ft_echo(line);
 	if (!ft_strcmp(line[0], "cd") && check_line(line, 2, "cd"))
-		ft_cd(*head, line);
+		ft_cd(head, line);
 	if (!ft_strcmp(line[0], "env") && check_line(line, 1, "env"))
 		ft_env(*head);
 	if (!ft_strcmp(line[0], "setenv") && check_line(line, 3, "setenv"))
@@ -218,14 +218,33 @@ int		is_builtins(char *command)
 
 int		read_line(char *enter, t_env **head, char **env)
 {
-	char **line;
+	char **parmlist;
+	char *path;
+	pid_t pid;
 
-	line = ft_strsplit(enter, ' ');
-	if (is_builtins(line[0]))
-		execut_builtins(line, head);
+	parmlist = ft_strsplit(enter, ' ');
+	if (is_builtins(parmlist[0]))
+	{
+		execut_builtins(parmlist, head);
+		ft_bonus_freedoubledem(parmlist);
+		return (0);
+	}
 	else
-		execve("/bin/ls", line, env);
-	ft_bonus_freedoubledem(line);
+	{
+		pid = fork();
+		if (pid != 0)
+			wait(NULL);
+		if (pid == 0)
+		{
+			path = ft_strjoin("/bin/",parmlist[0]);
+			execve(path, parmlist, env);
+			ft_strdel(&path);
+		}
+		ft_bonus_freedoubledem(parmlist);
+		return (0);
+	}
+		ft_putendl("Command not found.");
+
 	return (0);
 }
 
@@ -245,14 +264,16 @@ t_env	*swith_data(char **env, int j)
 	while (++j < i)
 	{
 		envline = ft_strsplit(env[j], '=');
-		if ((p->name = ft_strnew((ft_strlen(envline[0])))) == NULL)
+		// if ((p->name = ft_strnew((ft_strlen(envline[0])))) == NULL)
+		// 	exit(1);
+		if ((p->name = ft_strdup(envline[0])) == NULL)
 			exit(1);
-		p->name = ft_strdup(envline[0]);
 		if (envline[1])
 		{
-			if ((p->value = ft_strnew((ft_strlen(envline[1])))) == NULL)
+			// if ((p->value = ft_strnew((ft_strlen(envline[1])))) == NULL)
+			// 	exit(1);
+			if ((p->value = ft_strdup(envline[1])) == NULL)
 				exit(1);
-			p->value = ft_strdup(envline[1]);
 		}
 		else
 			p->value = NULL;
@@ -284,8 +305,9 @@ int		main(int ac, char **av, char **env)
 		if (ft_strlen(line))
 		{
 			read_line(line, &head, env);
-			free(line);
 		}
+		ft_strdel(&line);
+		line = NULL;
 	}
 	return (0);
 }
