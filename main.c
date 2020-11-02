@@ -60,18 +60,12 @@ void	add_val_list(t_env *p, char **line)
 
 void	ft_setenv(t_env *p, char **line)
 {
-	int ret;
+	char *ret;
 
 	if (!setenv_check(line))
 		return ;
-	printf("before srch in list\n");
 	ret = srch_in_list(p, line[1]);
-	printf("i am herer with ret == %d\n",ret);
-	if (ret == 2 || ret == 0)
-	{
-		add_val_list(p, line);
-	}
-	else if (ret == 1)
+	if (ret == NULL)
 	{
 		while (p->next)
 			p = p->next;
@@ -89,6 +83,11 @@ void	ft_setenv(t_env *p, char **line)
 		else
 			p->value = NULL;
 	}
+	else
+	{
+		add_val_list(p, line);
+	}
+	
 }
 
 int		check_line(char **line, int max, char *cammnd)
@@ -173,17 +172,17 @@ t_env		*ft_remove_list(t_env **head, char *unset)
 	return (*head);
 }
 
-t_env	*ft_unsetenv(t_env **p, char **line)
+t_env	*ft_unsetenv(t_env **head, char **line)
 {
 	int i;
 
 	i = -1;
 	while (line[++i])
 	{
-		if (srch_in_list(*p, line[i]) != 1)
-			*p = ft_remove_list(p, line[i]);
+		if (srch_in_list(*head, line[i]) != NULL)
+			*head = ft_remove_list(head, line[i]);
 	}
-	return (*p);
+	return (*head);
 }
 
 int		execut_builtins(char **line, t_env **head)
@@ -216,6 +215,49 @@ int		is_builtins(char *command)
 		return (0);
 }
 
+// char 	*ft_get_value(t_env *head, char *variabl)
+// {
+// 	while (head->next)
+// 	{
+// 		if (!(ft_strcmp(head->name, variabl)))
+// 			return (head->value);
+// 		head = head->next;
+// 	}
+// }
+
+char		*ft_chek_prog(t_env *head, char *prog)
+{
+	char **split;
+	int i;
+	char *newpath;
+	char *envpath;
+
+	i = -1;
+	envpath = srch_in_list(head, "PATH");
+	if ((envpath == NULL) || (!ft_strcmp(envpath , "empty")))
+	{
+		ft_putendl("Cammand not found.");
+		ft_putendl("i am herer");
+		return (NULL);
+	}
+	if (!(split = ft_strsplit(envpath, ':')))
+		exit(1);
+	while (split[++i])
+	{
+		newpath = ft_strjoin(split[i], "/");
+		newpath = ft_strjoin(newpath, prog);
+		if (!(access(newpath, F_OK)))
+		{
+			printf("path ===== %s\n",newpath);
+			ft_bonus_freedoubledem(split);
+			return (newpath);
+		}
+		ft_strdel(&newpath);
+	}
+	ft_bonus_freedoubledem(split);
+	return (NULL);
+}
+
 int		read_line(char *enter, t_env **head, char **env)
 {
 	char **parmlist;
@@ -229,22 +271,21 @@ int		read_line(char *enter, t_env **head, char **env)
 		ft_bonus_freedoubledem(parmlist);
 		return (0);
 	}
-	else
+	else if ((path = ft_chek_prog(*head, parmlist[0])))
 	{
 		pid = fork();
 		if (pid != 0)
 			wait(NULL);
 		if (pid == 0)
 		{
-			path = ft_strjoin("/bin/",parmlist[0]);
 			execve(path, parmlist, env);
 			ft_strdel(&path);
 		}
 		ft_bonus_freedoubledem(parmlist);
 		return (0);
 	}
+	else
 		ft_putendl("Command not found.");
-
 	return (0);
 }
 

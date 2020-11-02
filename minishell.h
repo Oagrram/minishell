@@ -28,7 +28,7 @@ typedef	struct	s_env
 	char			*value;
 	struct s_env	*next;
 }				t_env;
-int					srch_in_list(t_env *p, char *found);
+char				*srch_in_list(t_env *p, char *found);
 int					ft_cd(t_env **head, char **line);
 void				ft_cd_dir(t_env **head, char *parm);
 #endif

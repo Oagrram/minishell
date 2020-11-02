@@ -12,30 +12,20 @@
 
 #include "minishell.h"
 
-int			srch_in_list(t_env *p, char *found)
+char		*srch_in_list(t_env *p, char *found)
 {
-	printf("first\n");
 	while (p->next)
 	{
-		printf("first\n");
 		if (!(ft_strcmp(p->name, found)))
 		{
-			if (!p->value)
-			{
-				printf("i am return 2 \n");
-				printf("i am return 2 with p->val = %s\n",p->value);
-				return (2);
-			}
+			if (p->value)
+				return (p->value);
 			else
-			{
-				printf("i am return 0 n\n");
-				return (0);
-			}
+				return ("empty");
 		}
 		p = p->next;
 	}
-	printf("i am return 1 with p->val = %s\n",p->value);
-	return (1);
+	return (NULL);
 }
 
 int			ft_check_acses(char *path)
@@ -66,7 +56,7 @@ void		ft_cd_old_pwd(t_env **head)
 	p = *head;
 	oldpwd = NULL;
 	pwd = NULL;
-	if (srch_in_list(p, "OLDPWD"))
+	if (srch_in_list(p, "OLDPWD") == NULL)
 	{
 		ft_putendl("OLDPWD: Undefined variable.");
 		return ;
@@ -109,7 +99,7 @@ void		ft_cd_previous(t_env **head)
 	p = *head;
 	i = -1;
 	j = 0;
-	if (srch_in_list(p, "PWD"))
+	if (srch_in_list(p, "PWD") == NULL)
 	{
 		ft_putendl("PWD: Undefined variable.");
 		return ;
