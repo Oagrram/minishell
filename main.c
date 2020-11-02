@@ -234,21 +234,19 @@ char		*ft_chek_prog(t_env *head, char *prog)
 
 	i = -1;
 	envpath = srch_in_list(head, "PATH");
-	if ((envpath == NULL) || (!ft_strcmp(envpath , "empty")))
+	if ((envpath == NULL) || (!ft_strcmp(envpath, "empty")))
 	{
 		ft_putendl("Cammand not found.");
-		ft_putendl("i am herer");
 		return (NULL);
 	}
 	if (!(split = ft_strsplit(envpath, ':')))
 		exit(1);
 	while (split[++i])
 	{
-		newpath = ft_strjoin(split[i], "/");
-		newpath = ft_strjoin(newpath, prog);
+		newpath = ft_strjoin((ft_strjoin(split[i], "/")), prog);
+		// newpath = ft_strjoin(newpath, prog);
 		if (!(access(newpath, F_OK)))
 		{
-			printf("path ===== %s\n",newpath);
 			ft_bonus_freedoubledem(split);
 			return (newpath);
 		}
