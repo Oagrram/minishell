@@ -30,7 +30,6 @@ char		*srch_in_list(t_env *p, char *found)
 
 int			ft_check_acses(char *path)
 {
-	printf("PATH ++++ %s\n and ret == %d\n",path,access(path, F_OK));
 	if (access(path, F_OK))
 	{
 		ft_putendl("Does not exist");
@@ -42,8 +41,6 @@ int			ft_check_acses(char *path)
 		ft_putendl(": Permission denied.");
 		return (1);
 	}
-	else
-		return (0);
 	return (0);
 }
 
@@ -66,6 +63,7 @@ void		ft_cd_old_pwd(t_env **head)
 		if (!(ft_strcmp(p->name, "OLDPWD")))
 		{
 			ft_cd_dir(head, p->value);
+			return ;
 		}
 		// 	oldpwd = ft_strdup(p->value);
 		// if (!(ft_strcmp(p->name, "PWD")))
@@ -89,43 +87,43 @@ void		ft_cd_old_pwd(t_env **head)
 	// }
 }
 
-void		ft_cd_previous(t_env **head)
-{
-	int		i;
-	int		j;
-	char	*path;
-	t_env 	*p;
+// void		ft_cd_previous(t_env **head)
+// {
+// 	int		i;
+// 	int		j;
+// 	char	*path;
+// 	t_env 	*p;
 
-	p = *head;
-	i = -1;
-	j = 0;
-	if (srch_in_list(p, "PWD") == NULL)
-	{
-		ft_putendl("PWD: Undefined variable.");
-		return ;
-	}
-	while (p)
-	{
-		if (!(ft_strcmp(p->name, "PWD")))
-		{
-			while (p->value[++i])
-				if (p->value[i] == '/')
-					j = i;
-			if (j == 0)
-				path = ft_strdup("/");
-			else
-				path = ft_strsub(p->value, 0, j);
-			if (ft_check_acses(path))
-			{
-				ft_strdel(&(path));
-				return ;
-			}
-			ft_strdel(&(p->value));
-			p->value = path;
-		}
-		p = p->next;
-	}
-}
+// 	p = *head;
+// 	i = -1;
+// 	j = 0;
+// 	if (srch_in_list(p, "PWD") == NULL)
+// 	{
+// 		ft_putendl("PWD: Undefined variable.");
+// 		return ;
+// 	}
+// 	while (p)
+// 	{
+// 		if (!(ft_strcmp(p->name, "PWD")))
+// 		{
+// 			while (p->value[++i])
+// 				if (p->value[i] == '/')
+// 					j = i;
+// 			if (j == 0)
+// 				path = ft_strdup("/");
+// 			else
+// 				path = ft_strsub(p->value, 0, j);
+// 			if (ft_check_acses(path))
+// 			{
+// 				ft_strdel(&(path));
+// 				return ;
+// 			}
+// 			ft_strdel(&(p->value));
+// 			p->value = path;
+// 		}
+// 		p = p->next;
+// 	}
+// }
 
 void		ft_chang_value(t_env **head, char *value)
 {
@@ -135,7 +133,10 @@ void		ft_chang_value(t_env **head, char *value)
 	while (p->next)
 	{
 		if (!(ft_strcmp(p->name, "PWD")))
+		{
+			ft_strdel(&(p->value));
 			p->value = ft_strdup(value);
+		}
 		p = p->next;
 	}
 }
@@ -146,13 +147,7 @@ void		ft_cd_home(t_env **head)
 	t_env	*p;
 
 	p = *head;
-	path = NULL;
-	while (p->next)
-	{
-		if (!(ft_strcmp(p->name, "HOME")))
-			path = p->value;
-		p = p->next;
-	}
+	path = srch_in_list(*head, "HOME");
 	if (!path)
 	{
 		ft_putendl("cd: No home directory.");
@@ -169,7 +164,7 @@ void		ft_cd_dir(t_env **head, char *parm)
 		return ;
 	getcwd(cwd, sizeof(cwd));
 	ft_chang_value(head, cwd);
-	//free cwd
+	//cant free cwd
 }
 
 int			ft_cd(t_env **head, char **line)
@@ -177,7 +172,7 @@ int			ft_cd(t_env **head, char **line)
 	if (!line[1])
 		ft_cd_home(head);
 	else if (line[1] && !ft_strcmp(line[1], "-"))
-	 	ft_cd_old_pwd(head);
+		ft_cd_old_pwd(head);
 	// else if (line[1] && !(ft_strcmp(line[1], "../")))
 	// 	ft_cd_previous(head);
 	else

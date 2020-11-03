@@ -18,16 +18,17 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <unistd.h>
-#include <dirent.h>
-#include <sys/wait.h>
-#include <limits.h>
+# include <dirent.h>
+# include <sys/wait.h>
+# include <limits.h>
 
-typedef	struct	s_env
+typedef	struct		s_env
 {
 	char			*name;
 	char			*value;
 	struct s_env	*next;
-}				t_env;
+}					t_env;
+
 char				*srch_in_list(t_env *p, char *found);
 int					ft_cd(t_env **head, char **line);
 void				ft_cd_dir(t_env **head, char *parm);

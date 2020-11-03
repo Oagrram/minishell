@@ -12,9 +12,9 @@
 
 #include "minishell.h"
 
-int		setenv_check(char **line)
+int			setenv_check(char **line)
 {
-	int i;
+	int		i;
 
 	i = -1;
 	if (!ft_isalpha(line[1][0]) && line[1][0] != '_')
@@ -26,24 +26,20 @@ int		setenv_check(char **line)
 	{
 		if (!ft_isalnum(line[1][i]) && line[1][i] != '_')
 		{
-			ft_putendl("setenv: Variable name must contain alphanumeric characters.");
+			ft_putendl("setenv: Name must contain alphanumeric characters.");
 			return (0);
 		}
 	}
 	return (1);
 }
 
-void	add_val_list(t_env *p, char **line)
+void		add_val_list(t_env *p, char **line)
 {
 	while (p)
 	{
 		if (!ft_strcmp(p->name, line[1]))
 		{
-			if (!p->value && line[2])
-			{
-				p->value = ft_strdup(line[2]);
-			}
-			else if (p->value && line[2])
+			if (line[2])
 			{
 				ft_strdel(&(p->value));
 				p->value = ft_strdup(line[2]);
@@ -58,9 +54,9 @@ void	add_val_list(t_env *p, char **line)
 	}
 }
 
-void	ft_setenv(t_env *p, char **line)
+void		ft_setenv(t_env *p, char **line)
 {
-	char *ret;
+	char	*ret;
 
 	if (!setenv_check(line))
 		return ;
@@ -71,14 +67,13 @@ void	ft_setenv(t_env *p, char **line)
 			p = p->next;
 		if ((p->next = ft_memalloc(sizeof(t_env))) == NULL)
 			exit(1);
-		if ((p->name = ft_strnew(ft_strlen(line[1]))) == NULL)
+		if ((p->name = ft_strdup(line[1])) == NULL)
 			exit(1);
 		p->name = ft_strdup(line[1]);
 		if (line[2])
 		{
-			if ((p->value = ft_strnew(ft_strlen(line[2]))) == NULL)
+			if ((p->value = ft_strdup(line[2])) == NULL)
 				exit(1);
-			p->value = ft_strdup(line[2]);
 		}
 		else
 			p->value = NULL;
@@ -87,12 +82,11 @@ void	ft_setenv(t_env *p, char **line)
 	{
 		add_val_list(p, line);
 	}
-	
 }
 
-int		check_line(char **line, int max, char *cammnd)
+int			check_line(char **line, int max, char *cammnd)
 {
-	int i;
+	int		i;
 
 	i = -1;
 	while (line[++i])
@@ -118,9 +112,9 @@ int		check_line(char **line, int max, char *cammnd)
 	return (1);
 }
 
-int		ft_echo(char **line)
+int			ft_echo(char **line)
 {
-	int i;
+	int		i;
 
 	i = 0;
 	while (line[++i])
@@ -132,7 +126,7 @@ int		ft_echo(char **line)
 	return (0);
 }
 
-int		ft_env(t_env *head)
+int			ft_env(t_env *head)
 {
 	while (head->next)
 	{
@@ -149,8 +143,8 @@ int		ft_env(t_env *head)
 
 t_env		*ft_remove_list(t_env **head, char *unset)
 {
-	t_env *p;
-	t_env *prev;
+	t_env	*p;
+	t_env	*prev;
 
 	p = *head;
 	prev = NULL;
@@ -172,9 +166,9 @@ t_env		*ft_remove_list(t_env **head, char *unset)
 	return (*head);
 }
 
-t_env	*ft_unsetenv(t_env **head, char **line)
+t_env		*ft_unsetenv(t_env **head, char **line)
 {
-	int i;
+	int		i;
 
 	i = -1;
 	while (line[++i])
@@ -185,7 +179,7 @@ t_env	*ft_unsetenv(t_env **head, char **line)
 	return (*head);
 }
 
-int		execut_builtins(char **line, t_env **head)
+int			execut_builtins(char **line, t_env **head)
 {
 	if (!ft_strcmp(line[0], "echo"))
 		ft_echo(line);
@@ -205,7 +199,7 @@ int		execut_builtins(char **line, t_env **head)
 	return (0);
 }
 
-int		is_builtins(char *command)
+int			is_builtins(char *command)
 {
 	if (!ft_strcmp(command, "echo") || !ft_strcmp(command, "cd") ||
 	!ft_strcmp(command, "setenv") || !ft_strcmp(command, "unsetenv")
@@ -215,22 +209,25 @@ int		is_builtins(char *command)
 		return (0);
 }
 
-// char 	*ft_get_value(t_env *head, char *variabl)
-// {
-// 	while (head->next)
-// 	{
-// 		if (!(ft_strcmp(head->name, variabl)))
-// 			return (head->value);
-// 		head = head->next;
-// 	}
-// }
+char		*ft_add_slach(char *fst, char *sec)
+{
+	char	*new;
+	char	*tmp;
+
+	if ((tmp = ft_strjoin(fst, "/")) == NULL)
+		exit(1);
+	if ((new = ft_strjoin(tmp, sec)) == NULL)
+		exit(1);
+	ft_strdel(&(tmp));
+	return (new);
+}
 
 char		*ft_chek_prog(t_env *head, char *prog)
 {
-	char **split;
-	int i;
-	char *newpath;
-	char *envpath;
+	char	**split;
+	int		i;
+	char	*newpath;
+	char	*envpath;
 
 	i = -1;
 	envpath = srch_in_list(head, "PATH");
@@ -243,8 +240,7 @@ char		*ft_chek_prog(t_env *head, char *prog)
 		exit(1);
 	while (split[++i])
 	{
-		newpath = ft_strjoin((ft_strjoin(split[i], "/")), prog);
-		// newpath = ft_strjoin(newpath, prog);
+		newpath = ft_add_slach(split[i], prog);
 		if (!(access(newpath, F_OK)))
 		{
 			ft_bonus_freedoubledem(split);
@@ -256,11 +252,11 @@ char		*ft_chek_prog(t_env *head, char *prog)
 	return (NULL);
 }
 
-int		read_line(char *enter, t_env **head, char **env)
+int			read_line(char *enter, t_env **head, char **env)
 {
-	char **parmlist;
-	char *path;
-	pid_t pid;
+	char	**parmlist;
+	char	*path;
+	pid_t	pid;
 
 	parmlist = ft_strsplit(enter, ' ');
 	if (is_builtins(parmlist[0]))
@@ -276,7 +272,8 @@ int		read_line(char *enter, t_env **head, char **env)
 			wait(NULL);
 		if (pid == 0)
 		{
-			execve(path, parmlist, env);
+			printf("ecexve ========== %d\n",execve(path, parmlist, env));
+			perror(NULL);
 			ft_strdel(&path);
 		}
 		ft_bonus_freedoubledem(parmlist);
@@ -287,12 +284,12 @@ int		read_line(char *enter, t_env **head, char **env)
 	return (0);
 }
 
-t_env	*swith_data(char **env, int j)
+t_env		*swith_data(char **env, int j)
 {
-	int i;
-	t_env *head;
-	t_env *p;
-	char **envline;
+	int		i;
+	t_env	*head;
+	t_env	*p;
+	char	**envline;
 
 	i = -1;
 	while (env[++i])
@@ -303,14 +300,10 @@ t_env	*swith_data(char **env, int j)
 	while (++j < i)
 	{
 		envline = ft_strsplit(env[j], '=');
-		// if ((p->name = ft_strnew((ft_strlen(envline[0])))) == NULL)
-		// 	exit(1);
 		if ((p->name = ft_strdup(envline[0])) == NULL)
 			exit(1);
 		if (envline[1])
 		{
-			// if ((p->value = ft_strnew((ft_strlen(envline[1])))) == NULL)
-			// 	exit(1);
 			if ((p->value = ft_strdup(envline[1])) == NULL)
 				exit(1);
 		}
@@ -325,28 +318,25 @@ t_env	*swith_data(char **env, int j)
 	return (head);
 }
 
-int		main(int ac, char **av, char **env)
+int			main(int ac, char **av, char **env)
 {
-	char *line;
-	t_env *head;
+	char	*line;
+	t_env	*head;
 
 	av[0][0] = (char)ac;
 	head = swith_data(env, -1);
-	// while (head != NULL)
-	// {
-	// 	printf("%s=%s\n",head->name, head->value);
-	// 	head = head->next;
-	// }
 	while (get_next_line(0, &line))
 	{
 		if (!ft_strcmp(line, "exit"))
+		{
+			// free_list(&(head));
 			exit(1);
+		}
 		if (ft_strlen(line))
 		{
 			read_line(line, &head, env);
 		}
 		ft_strdel(&line);
-		line = NULL;
 	}
-	return (0);
+	return (ac);
 }
