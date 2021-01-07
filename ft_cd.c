@@ -12,8 +12,14 @@
 
 #include "minishell.h"
 
-char		*srch_in_list(t_env *p, char *found)
+char		*ft_srch_in_list(t_env *p, char *found)
 {
+	if (found[0] == '~')
+	{
+		found = "HOME";
+	}
+	if (found[0] == '$')
+		found = &found[1];
 	while (p->next)
 	{
 		if (!(ft_strcmp(p->name, found)))
@@ -53,7 +59,7 @@ void		ft_cd_old_pwd(t_env **head)
 	p = *head;
 	oldpwd = NULL;
 	pwd = NULL;
-	if (srch_in_list(p, "OLDPWD") == NULL)
+	if (ft_srch_in_list(p, "OLDPWD") == NULL)
 	{
 		ft_putendl("OLDPWD: Undefined variable.");
 		return ;
@@ -97,7 +103,7 @@ void		ft_cd_old_pwd(t_env **head)
 // 	p = *head;
 // 	i = -1;
 // 	j = 0;
-// 	if (srch_in_list(p, "PWD") == NULL)
+// 	if (ft_srch_in_list(p, "PWD") == NULL)
 // 	{
 // 		ft_putendl("PWD: Undefined variable.");
 // 		return ;
@@ -147,7 +153,7 @@ void		ft_cd_home(t_env **head)
 	t_env	*p;
 
 	p = *head;
-	path = srch_in_list(*head, "HOME");
+	path = ft_srch_in_list(*head, "HOME");
 	if (!path)
 	{
 		ft_putendl("cd: No home directory.");

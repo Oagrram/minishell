@@ -60,7 +60,7 @@ void		ft_setenv(t_env *p, char **line)
 
 	if (!setenv_check(line))
 		return ;
-	ret = srch_in_list(p, line[1]);
+	ret = ft_srch_in_list(p, line[1]);
 	if (ret == NULL)
 	{
 		while (p->next)
@@ -173,7 +173,7 @@ t_env		*ft_unsetenv(t_env **head, char **line)
 	i = -1;
 	while (line[++i])
 	{
-		if (srch_in_list(*head, line[i]) != NULL)
+		if (ft_srch_in_list(*head, line[i]) != NULL)
 			*head = ft_remove_list(head, line[i]);
 	}
 	return (*head);
@@ -209,30 +209,29 @@ int			ft_is_builtins(char *command)
 		return (0);
 }
 
-char		*ft_add_slach(char *fst, char *sec)
+char		*ft_add_slach(char *path, char *comand)
 {
 	char	*new;
 	char	*tmp;
 
-	if ((tmp = ft_strjoin(fst, "/")) == NULL)
+	if ((tmp = ft_strjoin(path, "/")) == NULL)
 		exit(1);
-	if ((new = ft_strjoin(tmp, sec)) == NULL)
+	if ((new = ft_strjoin(tmp, comand)) == NULL)
 		exit(1);
 	ft_strdel(&(tmp));
 	return (new);
 }
 
-char		*ft_chek_prog(t_env *head, char *prog)
+char		*ft_chek_prog(t_env *head, char *comand)
 {
 	char	**split;
 	int		i;
 	char	*newpath;
 	char	*envpath;
 	struct stat state;
-	
 
 	i = -1;
-	envpath = srch_in_list(head, "PATH");
+	envpath = ft_srch_in_list(head, "PATH");
 	if ((envpath == NULL) || (!ft_strcmp(envpath, "empty")))
 	{
 		ft_putendl("Cammand not found.");
@@ -242,13 +241,12 @@ char		*ft_chek_prog(t_env *head, char *prog)
 		exit(1);
 	while (split[++i])
 	{
-		newpath = ft_add_slach(split[i], prog);
+		newpath = ft_add_slach(split[i], comand);
 		if (!stat(newpath, &state))
 		{
-			printf("ITS HERE  >>>> %s\n",newpath);
 			if (S_ISDIR(state.st_mode))
 			{
-				printf("is diractory\n");
+				ft_putendl("is diractory.");
 				ft_strdel(&newpath);
 			}
 			else if ((access(newpath, X_OK)))
@@ -259,22 +257,47 @@ char		*ft_chek_prog(t_env *head, char *prog)
 			ft_bonus_freedoubledem(split);
 			return (newpath);
 		}
-		// if (!access(newpath, F_OK))
-		// {
-			
-		// 	if ((access(newpath, X_OK)))
-		// 	{
-		// 		ft_putendl("Permission denied.");
-		// 		ft_strdel(&newpath);
-		// 	}
-		// 	ft_bonus_freedoubledem(split);
-		// 	return (newpath);
-		// }
 		ft_strdel(&newpath);
 	}
 	ft_putendl("Command not found.");
 	ft_bonus_freedoubledem(split);
 	return (NULL);
+}
+
+int		ft_check_expans(char **parmlist, t_env *env)
+{
+	int i;
+	char *ret;
+
+	i = 0;
+	while (parmlist[++i])
+	{
+		if (parmlist[i][0] == '$' || parmlist[i][0] == '~')
+		{
+			if ((ret = ft_srch_in_list(env, &(parmlist[i][0]))) != NULL &&
+			(ft_strcmp(ret, "empty")))
+			{
+				if (parmlist[i][0] == '~' && parmlist[i][1])
+				{
+					ret = ft_strjoin(ret, &parmlist[i][1]);
+					ft_strdel(&parmlist[i]);
+					parmlist[i] = ret;
+				}
+				else
+				{
+					ft_strdel(&parmlist[i]);
+					parmlist[i] = ft_strdup(ret);
+				}
+			}
+			else
+			{
+				ft_putstr(&parmlist[i][1]);
+				ft_putendl(": Undefined variable.");
+				return (0);
+			}
+		}
+	}
+	return (1);
 }
 
 int			ft_read_line(char *enter, t_env **head, char **env)
@@ -283,40 +306,43 @@ int			ft_read_line(char *enter, t_env **head, char **env)
 	char	*path;
 	pid_t	pid;
 
-	parmlist = ft_strsplit(enter, ' ');
-	if (ft_is_builtins(parmlist[0]))
+	if ((parmlist = ft_strsplit(enter, ' ')))
 	{
-		ft_execut_builtins(parmlist, head);
-	}
-	else if ((path = ft_chek_prog(*head, parmlist[0])))
-	{
-		pid = fork();
-		if (pid != 0)
-			wait(NULL);
-		if (pid == 0)
+		printf("i am not heresr\n");
+		if (ft_is_builtins(parmlist[0]))
 		{
-			if (execve(path, parmlist, env) == -1)
+			if (ft_check_expans(parmlist, *head) == 0)
 			{
-				printf("ERROR\n");
+				return(0);
 			}
-			ft_strdel(&path);
+			ft_execut_builtins(parmlist, head);
 		}
+		else if ((path = ft_chek_prog(*head, parmlist[0])))
+		{
+			pid = fork();
+			if (pid != 0)
+				wait(NULL);
+			if (pid == 0)
+			{
+				if (execve(path, parmlist, env) == -1)
+				{
+					printf("ERROR\n");
+				}
+				ft_strdel(&path);
+			}
+		}
+		// ft_strdel(&path);
+		ft_bonus_freedoubledem(parmlist);
 	}
-	// ft_strdel(&path);
-	ft_bonus_freedoubledem(parmlist);
 	return (0);
 }
 
 t_env		*ft_swith_data(char **env, int j)
 {
-	// int		i;
 	t_env	*head;
 	t_env	*p;
 	char	**envline;
 
-	// i = -1;
-	// while (env[++i])
-	// 	;
 	if ((p = ft_memalloc(sizeof(t_env))) == NULL)
 		exit(1);
 	head = p;
@@ -332,7 +358,7 @@ t_env		*ft_swith_data(char **env, int j)
 		}
 		else
 			p->value = NULL;
-		if (env[j+1])
+		if (env[j + 1])
 			if ((p->next = ft_memalloc(sizeof(t_env))) == NULL)
 				exit(1);
 		p = p->next;
@@ -363,19 +389,22 @@ int			main(int ac, char **av, char **env)
 	av[0][0] = (char)ac;
 	head = ft_swith_data(env, -1);
 	ft_putstr("$> ");
-	while (get_next_line(0, &line))
+	while (1)
 	{
-		if (!ft_strcmp(line, "exit"))
+		while (get_next_line(0, &line))
 		{
-			free_env(&(head));
-			exit(1);
+			if (!ft_strcmp(line, "exit"))
+			{
+				free_env(&(head));
+				exit(1);
+			}
+			if (strlen(line))
+			{
+				ft_read_line(line, &head, env);
+			}
+			ft_strdel(&line);
+			ft_putstr("$> ");
 		}
-		if (ft_strlen(line))
-		{
-			ft_read_line(line, &head, env);
-		}
-		ft_strdel(&line);
-		ft_putstr("$> ");
 	}
 	return (ac);
 }

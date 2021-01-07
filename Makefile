@@ -6,7 +6,7 @@
 #    By: aymhabib <aymhabib@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/01/16 02:00:08 by aymhabib          #+#    #+#              #
-#    Updated: 2019/12/12 23:39:37 by oagrram          ###   ########.fr        #
+#    Updated: 2020/12/28 15:40:10 by oagrram          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	make -C libft
-	$(CC) $(CFLAGS) libft/libft.a $(OBJ) -o $(NAME)
+	$(CC) -g $(CFLAGS) libft/libft.a $(OBJ) -o $(NAME)
 	
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
