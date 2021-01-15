@@ -222,47 +222,99 @@ char		*ft_add_slach(char *path, char *comand)
 	return (new);
 }
 
-char		*ft_chek_prog(t_env *head, char *comand)
+void		ft_check_current()
 {
-	char	**split;
-	int		i;
-	char	*newpath;
-	char	*envpath;
-	struct stat state;
 
+}
+
+char		*ft_check_prog(t_env *head, char *command)
+{
+	int i;
+	char *path;
+	char	**split;
+
+	split = NULL;
 	i = -1;
-	envpath = ft_srch_in_list(head, "PATH");
-	if ((envpath == NULL) || (!ft_strcmp(envpath, "empty")))
+	if (command[0] == '.' || command[0] == '/')
 	{
-		ft_putendl("Cammand not found.");
+		if (access(command, F_OK))
+		{
+			ft_putendl("Command not found.");
+			return (NULL);
+		}
+		return (command);
+	}
+	path = ft_srch_in_list(head, "PATH");
+	if (path == NULL || !ft_strcmp(path, "empty"))
+	{
+		ft_putendl("Command not found.");
 		return (NULL);
 	}
-	if (!(split = ft_strsplit(envpath, ':')))
+	if (!(split = ft_strsplit(path, ':')))
 		exit(1);
 	while (split[++i])
 	{
-		newpath = ft_add_slach(split[i], comand);
-		if (!stat(newpath, &state))
-		{
-			if (S_ISDIR(state.st_mode))
-			{
-				ft_putendl("is diractory.");
-				ft_strdel(&newpath);
-			}
-			else if ((access(newpath, X_OK)))
-			{
-				ft_putendl("Permission denied.");
-				ft_strdel(&newpath);
-			}
-			ft_bonus_freedoubledem(split);
-			return (newpath);
-		}
-		ft_strdel(&newpath);
+		path = ft_add_slach(split[i], command);
+		if (!(access(path, F_OK)))
+			break;
+		ft_strdel(&path);
 	}
-	ft_putendl("Command not found.");
 	ft_bonus_freedoubledem(split);
-	return (NULL);
+	if (path == NULL)
+		ft_putendl("Command not found.");
+	return (path);
 }
+
+// char		*ft_chek_prog(t_env *head, char *comand)
+// {
+// 	char	**split;
+// 	int		i;
+// 	char	*newpath;
+// 	char	*envpath;
+// 	struct stat state;
+// 	char cwd[PATH_MAX];
+
+// 	i = -1;
+// 	split = NULL;
+// 	envpath = ft_srch_in_list(head, "PATH");
+// 	if ((envpath != NULL) || (ft_strcmp(envpath, "empty")))
+// 	{
+// 		if (!(split = ft_strsplit(envpath, ':')))
+// 			exit(1);
+// 		while (split[++i])
+// 		{
+// 			newpath = ft_add_slach(split[i], comand);
+// 			if (!stat(newpath, &state))
+// 			{
+// 				if (S_ISDIR(state.st_mode))
+// 				{
+// 					ft_putendl("is diractory.");
+// 					ft_strdel(&newpath);
+// 				}
+// 				else if ((access(newpath, X_OK)))
+// 				{	
+// 					ft_putendl("Permission denied.");
+// 					ft_strdel(&newpath);
+// 				}
+// 				ft_bonus_freedoubledem(split);
+// 				return (newpath);
+// 			}
+// 			ft_strdel(&newpath);
+// 			if (!split[i + 2] && stat(ft_add_slach(split[i + 1], comand), &state) && comand[0] != '/' && comand[0] != '.')
+// 			{
+// 				printf(">>>>>> split[i + 1] === %s\n",split[i + 1]);
+// 				ft_strdel(&split[i]);
+// 				getcwd(cwd, sizeof(cwd));
+// 				split[i + 1]  = cwd;
+// 				printf(">>>>>> split[i + 1] === %s\n",split[i + 1]);
+// 			}
+// 		}
+// 	}
+
+// 	ft_putendl("Command not found.");
+// 	ft_bonus_freedoubledem(split);
+// 	return (NULL);
+// }
 
 int		ft_check_expans(char **parmlist, t_env *env)
 {
@@ -306,9 +358,8 @@ int			ft_read_line(char *enter, t_env **head, char **env)
 	char	*path;
 	pid_t	pid;
 
-	if ((parmlist = ft_strsplit(enter, ' ')))
+	if ((parmlist = ft_strsplitstr(enter, " \t\n\r\a\"")))
 	{
-		printf("i am not heresr\n");
 		if (ft_is_builtins(parmlist[0]))
 		{
 			if (ft_check_expans(parmlist, *head) == 0)
@@ -317,7 +368,7 @@ int			ft_read_line(char *enter, t_env **head, char **env)
 			}
 			ft_execut_builtins(parmlist, head);
 		}
-		else if ((path = ft_chek_prog(*head, parmlist[0])))
+		else if ((path = ft_check_prog(*head, parmlist[0])))
 		{
 			pid = fork();
 			if (pid != 0)

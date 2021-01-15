@@ -21,6 +21,7 @@
 # include <dirent.h>
 # include <sys/wait.h>
 # include <limits.h>
+#define PATH_MAX 1024
 
 typedef	struct		s_env
 {
