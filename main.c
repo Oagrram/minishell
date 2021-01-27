@@ -222,10 +222,6 @@ char		*ft_add_slach(char *path, char *comand)
 	return (new);
 }
 
-void		ft_check_current()
-{
-
-}
 
 char		*ft_check_prog(t_env *head, char *command)
 {
@@ -248,7 +244,7 @@ char		*ft_check_prog(t_env *head, char *command)
 	if (path == NULL || !ft_strcmp(path, "empty"))
 	{
 		ft_putendl("Command not found.");
-		return (NULL);
+		return (NULL);	
 	}
 	if (!(split = ft_strsplit(path, ':')))
 		exit(1);
@@ -265,89 +261,98 @@ char		*ft_check_prog(t_env *head, char *command)
 	return (path);
 }
 
-// char		*ft_chek_prog(t_env *head, char *comand)
-// {
-// 	char	**split;
-// 	int		i;
-// 	char	*newpath;
-// 	char	*envpath;
-// 	struct stat state;
-// 	char cwd[PATH_MAX];
+int		ft_index(char *str, int index)
+{
+	while(str[index] == '$')
+	{
+		index++;
+	}
+	while (str[index] && ft_isalnum(str[index]) && ft_isalpha(str[index]))
+	{
+		index++;
+	}
+	return (index - 1);
+}
 
-// 	i = -1;
-// 	split = NULL;
-// 	envpath = ft_srch_in_list(head, "PATH");
-// 	if ((envpath != NULL) || (ft_strcmp(envpath, "empty")))
-// 	{
-// 		if (!(split = ft_strsplit(envpath, ':')))
-// 			exit(1);
-// 		while (split[++i])
-// 		{
-// 			newpath = ft_add_slach(split[i], comand);
-// 			if (!stat(newpath, &state))
-// 			{
-// 				if (S_ISDIR(state.st_mode))
-// 				{
-// 					ft_putendl("is diractory.");
-// 					ft_strdel(&newpath);
-// 				}
-// 				else if ((access(newpath, X_OK)))
-// 				{	
-// 					ft_putendl("Permission denied.");
-// 					ft_strdel(&newpath);
-// 				}
-// 				ft_bonus_freedoubledem(split);
-// 				return (newpath);
-// 			}
-// 			ft_strdel(&newpath);
-// 			if (!split[i + 2] && stat(ft_add_slach(split[i + 1], comand), &state) && comand[0] != '/' && comand[0] != '.')
-// 			{
-// 				printf(">>>>>> split[i + 1] === %s\n",split[i + 1]);
-// 				ft_strdel(&split[i]);
-// 				getcwd(cwd, sizeof(cwd));
-// 				split[i + 1]  = cwd;
-// 				printf(">>>>>> split[i + 1] === %s\n",split[i + 1]);
-// 			}
-// 		}
-// 	}
+int		ft_dollar(char *str, char **dollar, t_env *env)
+{
+	int		i;
+	char	*srch;
+	int		index;
 
-// 	ft_putendl("Command not found.");
-// 	ft_bonus_freedoubledem(split);
-// 	return (NULL);
-// }
+	i = -1;
+	while (str[++i])
+	{
+		if (str[i] == '$')
+		{
+			index = ft_index(str, i + 1);
+			srch = ft_strsub(str, i + 1, index - i);
+			if ((srch = ft_srch_in_list(env, srch)) != NULL
+			&& (ft_strcmp(srch, "empty")))
+			{
+				if (*dollar)
+					*dollar = ft_strjoin(*dollar, srch);
+				else
+					*dollar = ft_strdup(srch);
+			}
+			ft_strdel(&srch);
+		}
+	}
+	return (1);
+}
+
+int		ft_telda(char *parmlist,  char **telda, t_env *env)
+{
+	int i;
+
+	i = 0;
+	if ((*telda = ft_srch_in_list(env, "HOME")) != NULL
+	&& (ft_strcmp(*telda, "empty")))
+	{
+		while (parmlist[++i])
+		{
+			if (parmlist[i] == '$')
+			{
+				*telda = ft_strjoin(*telda, ft_strsub(parmlist, 1, i - 1));
+				break ;
+			}
+			else if (!parmlist[i + 1])
+			{
+				*telda = ft_strjoin(*telda, ft_strsub(parmlist, 1, i));
+			}
+		}
+	}
+	return (1);
+}
 
 int		ft_check_expans(char **parmlist, t_env *env)
 {
 	int i;
-	char *ret;
+	char *telda;
+	char *dollar;
 
 	i = 0;
+	telda = NULL;
+	dollar = NULL;
 	while (parmlist[++i])
 	{
-		if (parmlist[i][0] == '$' || parmlist[i][0] == '~')
+		if (parmlist[i][0] == '~' && (parmlist[i][1] == '/' || !parmlist[i][1]))
 		{
-			if ((ret = ft_srch_in_list(env, &(parmlist[i][0]))) != NULL &&
-			(ft_strcmp(ret, "empty")))
-			{
-				if (parmlist[i][0] == '~' && parmlist[i][1])
-				{
-					ret = ft_strjoin(ret, &parmlist[i][1]);
-					ft_strdel(&parmlist[i]);
-					parmlist[i] = ret;
-				}
-				else
-				{
-					ft_strdel(&parmlist[i]);
-					parmlist[i] = ft_strdup(ret);
-				}
-			}
-			else
-			{
-				ft_putstr(&parmlist[i][1]);
-				ft_putendl(": Undefined variable.");
-				return (0);
-			}
+			ft_telda(parmlist[i], &telda, env);
 		}
+		ft_dollar(parmlist[i], &dollar, env);
+		if (telda && dollar)
+		{
+			ft_strdel(&parmlist[i]);
+			parmlist[i] = ft_strjoin(telda, dollar);
+		}
+		else if (telda || dollar)
+		{
+			ft_strdel(&parmlist[i]);
+			parmlist[i] = ft_strdup(((telda) ? telda : dollar));
+		}
+		ft_strdel(&dollar);
+		ft_strdel(&telda);
 	}
 	return (1);
 }
@@ -360,12 +365,9 @@ int			ft_read_line(char *enter, t_env **head, char **env)
 
 	if ((parmlist = ft_strsplitstr(enter, " \t\n\r\a\"")))
 	{
+		ft_check_expans(parmlist, *head);
 		if (ft_is_builtins(parmlist[0]))
 		{
-			if (ft_check_expans(parmlist, *head) == 0)
-			{
-				return(0);
-			}
 			ft_execut_builtins(parmlist, head);
 		}
 		else if ((path = ft_check_prog(*head, parmlist[0])))
@@ -377,7 +379,7 @@ int			ft_read_line(char *enter, t_env **head, char **env)
 			{
 				if (execve(path, parmlist, env) == -1)
 				{
-					printf("ERROR\n");
+					ft_putendl("Permission Denied.\n");
 				}
 				ft_strdel(&path);
 			}

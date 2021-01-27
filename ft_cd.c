@@ -25,7 +25,7 @@ char		*ft_srch_in_list(t_env *p, char *found)
 		if (!(ft_strcmp(p->name, found)))
 		{
 			if (p->value)
-				return (p->value);
+				return (ft_strdup(p->value));
 			else
 				return ("empty");
 		}

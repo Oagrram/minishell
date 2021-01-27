@@ -6,7 +6,7 @@
 #    By: aymhabib <aymhabib@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/01/16 02:00:08 by aymhabib          #+#    #+#              #
-#    Updated: 2019/12/12 23:39:37 by oagrram          ###   ########.fr        #
+#    Updated: 2021/01/12 11:02:01 by oagrram          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ SRC = ft_memset.c ft_bzero.c ft_memcpy.c  ft_memccpy.c \
 	ft_putchar.c ft_putstr.c ft_putendl.c ft_putnbr.c ft_putchar_fd.c \
 	ft_putstr_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
 	ft_lstadd.c ft_lstdel.c ft_lstdelone.c ft_lstiter.c ft_lstmap.c ft_lstnew.c \
-	ft_bonus_countwords.c ft_bonus_freedoubledem.c get_next_line.c
+	ft_bonus_countwords.c ft_bonus_freedoubledem.c get_next_line.c ft_strsplitstr.c
 OBJ = $(SRC:.c=.o)
 INCLUDE = libft.h
 CFLAGS = -Wall -Wextra -Werror

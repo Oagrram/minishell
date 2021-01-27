@@ -6,7 +6,7 @@
 /*   By: elfetoua <elfetoua@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/31 15:40:12 by elfetoua          #+#    #+#             */
-/*   Updated: 2020/02/22 17:37:36 by elfetoua         ###   ########.fr       */
+/*   Updated: 2021/01/12 11:03:16 by oagrram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,4 +98,5 @@ void				ft_bonus_insertlst(t_list *prev_node, const void *content,
 t_list				*ft_lstnew(void const *content, size_t content_size);
 t_list				*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
 int					get_next_line(const int fd, char **line);
+char				**ft_strsplitstr(char *input, char *token);
 #endif
