@@ -1,22 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdel.c                                        :+:      :+:    :+:   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elfetoua <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: oagrram <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/04/14 21:21:17 by elfetoua          #+#    #+#             */
-/*   Updated: 2019/04/14 21:21:20 by elfetoua         ###   ########.fr       */
+/*   Created: 2021/01/29 15:24:59 by oagrram           #+#    #+#             */
+/*   Updated: 2021/01/29 15:25:00 by oagrram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include  "../../includes/minishell.h"
 
-void	ft_strdel(char **as)
+int			ft_env(t_env *head)
 {
-	if (*as != NULL)
+	while (head->next)
 	{
-		free(*as);
-		*as = (NULL);
+		ft_putstr(head->name);
+		ft_putchar('=');
+		if (!head->value)
+			ft_putendl("");
+		else
+			ft_putendl(head->value);
+		head = head->next;
 	}
+	return (0);
 }

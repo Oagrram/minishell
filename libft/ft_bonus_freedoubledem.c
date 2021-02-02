@@ -19,7 +19,7 @@ void	ft_bonus_freedoubledem(char **map)
 	i = 0;
 	while (map[i])
 	{
-		free(map[i]);
+		ft_strdel(&map[i]);
 		i++;
 	}
 	free(map);

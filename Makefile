@@ -12,7 +12,18 @@
 
 NAME= minishell
 
-SRC= main.c ft_cd.c
+SRC= src/minishell.c \
+		src/tools.c \
+		src/expansions.c \
+		src/exec_cmd.c \
+		src/data_to_list.c \
+		src/builtins.c \
+		src/builtins/ft_cd.c \
+		src/builtins/ft_echo.c \
+		src/builtins/ft_env.c \
+		src/builtins/ft_exit.c \
+		src/builtins/ft_setenv.c \
+		src/builtins/ft_unsetenv.c \
 
 OBJ= $(SRC:.c=.o)
 

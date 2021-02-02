@@ -1,22 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdel.c                                        :+:      :+:    :+:   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elfetoua <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: oagrram <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/04/14 21:21:17 by elfetoua          #+#    #+#             */
-/*   Updated: 2019/04/14 21:21:20 by elfetoua         ###   ########.fr       */
+/*   Created: 2021/01/29 15:24:59 by oagrram           #+#    #+#             */
+/*   Updated: 2021/01/29 15:25:00 by oagrram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include "../../includes/minishell.h"
 
-void	ft_strdel(char **as)
+void		ft_echo(char **line)
 {
-	if (*as != NULL)
+	int		i;
+
+	i = 0;
+	while (line[++i])
 	{
-		free(*as);
-		*as = (NULL);
+		ft_putstr(line[i]);
+		ft_putchar(' ');
 	}
+	ft_putchar('\n');
 }
