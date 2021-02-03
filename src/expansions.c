@@ -12,32 +12,44 @@
 
 #include "../includes/minishell.h"
 
-int		ft_index(char *str, int index)
+int		ft_index(char *str, int index,char srch)
 {
-	while(str[index] == '$')
+	if (srch == '$')
 	{
-		index++;
+		while(str[index] &&  str[index] == '$')
+		{
+			index++;
+		}
+		while (str[index] && ft_isalnum(str[index]) && ft_isalpha(str[index]))
+		{
+			index++;
+		}
+		return (index - 1);
 	}
-	while (str[index] && ft_isalnum(str[index]) && ft_isalpha(str[index]))
+	else
 	{
-		index++;
+		while (str[index] && str[index] != '$')
+		{
+			index++;
+		}
+		return (index - 1);
 	}
-	return (index - 1);
+	return (0);
 }
 
-int		ft_dollar(char *str, char **dollar, t_env *env)
+int		ft_dollar(char *str, char **dollar, t_env *env, int i)
 {
-	int		i;
 	char	*srch;
 	int		index;
 
-	i = -1;
+	index = 0;
 	while (str[++i])
 	{
 		if (str[i] == '$')
 		{
-			index = ft_index(str, i + 1);
+			index = ft_index(str, i + 1, '$');
 			srch = ft_strsub(str, i + 1, index - i);
+			printf("stop there %d\n and susb from %d \n",index,index - i);
 			if ((srch = ft_srch_in_list(env, srch)) != NULL
 			&& (ft_strcmp(srch, "empty")))
 			{
@@ -46,7 +58,21 @@ int		ft_dollar(char *str, char **dollar, t_env *env)
 				else
 					*dollar = ft_strdup(srch);
 			}
+			i = index;
 			ft_strdel(&srch);
+		}
+		else 
+		{
+			index = ft_index(str, i, 'c');
+			printf ("sub == %s\n",ft_strsub(str, i, (index - i)));
+			printf ("<<<<<<<<<<< index === %d ||| i == %d>>>>>>>>>>>>\n",ft_index(str,i,'c'), i);
+			if (*dollar)
+			{
+				*dollar = ft_strjoin(*dollar, ft_strsub(str, i, (index - i) + 1));
+			}
+			else
+				*dollar = ft_strdup(ft_strsub(str, i, (index - i) + 1));
+			i = index;
 		}
 	}
 	return (1);
@@ -91,7 +117,8 @@ int		ft_check_expans(char **parmlist, t_env *env)
 		{
 			ft_telda(parmlist[i], &telda, env);
 		}
-		ft_dollar(parmlist[i], &dollar, env);
+		ft_dollar(parmlist[i], &dollar, env,
+		((parmlist[i][0] == '~' && parmlist[i][1] == '/') ? 1 : -1));
 		if (telda && dollar)
 		{
 			ft_strdel(&parmlist[i]);
