@@ -14,31 +14,24 @@
 
 t_env		*ft_swith_data(char **env, int j)
 {
+	char	**envline;
 	t_env	*head;
 	t_env	*p;
-	char	**envline;
 
-	if ((p = ft_memalloc(sizeof(t_env))) == NULL)
-		exit(1);
+	p = ft_memalloc(sizeof(t_env));
 	head = p;
 	while (env[++j])
 	{
 		envline = ft_strsplit(env[j], '=');
-		if ((p->name = ft_strdup(envline[0])) == NULL)
-			exit(1);
+		p->name = ft_strdup(envline[0]);
 		if (envline[1])
-		{
-			if ((p->value = ft_strdup(envline[1])) == NULL)
-				exit(1);
-		}
+			p->value = ft_strdup(envline[1]);
 		else
 			p->value = NULL;
 		if (env[j + 1])
-			if ((p->next = ft_memalloc(sizeof(t_env))) == NULL)
-				exit(1);
+			p->next = ft_memalloc(sizeof(t_env));
 		p = p->next;
 		ft_bonus_freedoubledem(envline);
 	}
 	return (head);
 }
-

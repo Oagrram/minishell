@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include  "../../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 void		add_val_list(t_env *p, char **line)
 {
@@ -58,23 +58,17 @@ void		ft_setenv(t_env *p, char **line)
 {
 	char	*ret;
 
+	ret = NULL;
 	if (!setenv_check(line))
 		return ;
-	ret = ft_srch_in_list(p, line[1]);
-	if (ret == NULL)
+	if ((ret = ft_srch_in_list(p, line[1])) == NULL)
 	{
 		while (p->next)
 			p = p->next;
-		if ((p->next = ft_memalloc(sizeof(t_env))) == NULL)
-			exit(1);
-		if ((p->name = ft_strdup(line[1])) == NULL)
-			exit(1);
+		p->next = ft_memalloc(sizeof(t_env));
 		p->name = ft_strdup(line[1]);
 		if (line[2])
-		{
-			if ((p->value = ft_strdup(line[2])) == NULL)
-				exit(1);
-		}
+			p->value = ft_strdup(line[2]);
 		else
 			p->value = NULL;
 	}
@@ -83,4 +77,3 @@ void		ft_setenv(t_env *p, char **line)
 		add_val_list(p, line);
 	}
 }
-

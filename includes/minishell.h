@@ -21,7 +21,7 @@
 # include <dirent.h>
 # include <sys/wait.h>
 # include <limits.h>
-#define PATH_MAX 1024
+# define PATH_MAX 1024
 
 typedef	struct		s_env
 {
@@ -30,19 +30,21 @@ typedef	struct		s_env
 	struct s_env	*next;
 }					t_env;
 
+t_env				*ft_unsetenv(t_env **head, char **line);
+int					ft_index(char *str, int index, char srch);
+t_env				*ft_swith_data(char **env, int j);
 char				*ft_srch_in_list(t_env *p, char *found);
 int					ft_cd(t_env **head, char **line);
 void				ft_cd_dir(t_env **head, char *parm);
 char				*ft_srch_in_list(t_env *p, char *found);
-int					ft_check_acses(char *path);
 int					ft_check_expans(char **parmlist, t_env *env);
-int					ft_is_builtins(char *command);
 int					ft_execut_builtins(char **line, t_env **head);
-char				*ft_check_prog(t_env *head, char *command);
-t_env				*ft_swith_data(char **env, int j);
+char				*ft_check_prog(t_env *head, char *command, int i);
+char				*ft_add_slach(char *path, char *comand);
+int					ft_is_builtins(char *command);
+int					ft_check_acses(char *path);
+void				ft_setenv(t_env *p, char **line);
 void				ft_echo(char **line);
 int					ft_env(t_env *head);
-void				ft_setenv(t_env *p, char **line);
-t_env				*ft_unsetenv(t_env **head, char **line);
 
 #endif

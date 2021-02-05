@@ -12,6 +12,44 @@
 
 #include "../includes/minishell.h"
 
+int			ft_index(char *str, int index, char srch)
+{
+	if (srch == '$')
+	{
+		while (str[index] && str[index] == '$')
+		{
+			index++;
+		}
+		while (str[index] && ft_isalnum(str[index]) && ft_isalpha(str[index]))
+		{
+			index++;
+		}
+		return (index - 1);
+	}
+	else
+	{
+		while (str[index] && str[index] != '$')
+		{
+			index++;
+		}
+		return (index - 1);
+	}
+	return (0);
+}
+
+char		*ft_add_slach(char *path, char *comand)
+{
+	char	*new;
+	char	*tmp;
+
+	tmp = NULL;
+	new = NULL;
+	tmp = ft_strjoin(path, "/");
+	new = ft_strjoin(tmp, comand);
+	ft_strdel(&(tmp));
+	return (new);
+}
+
 char		*ft_srch_in_list(t_env *p, char *found)
 {
 	if (found[0] == '~')
@@ -49,4 +87,3 @@ int			ft_check_acses(char *path)
 	}
 	return (0);
 }
-

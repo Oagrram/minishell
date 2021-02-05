@@ -23,24 +23,14 @@ int			ft_read_line(char *enter, t_env **head, char **env)
 	{
 		ft_check_expans(parmlist, *head);
 		if (ft_is_builtins(parmlist[0]))
-		{
 			ft_execut_builtins(parmlist, head);
-		}
-		else if ((path = ft_strdup(ft_check_prog(*head, parmlist[0]))))
+		else if ((path = ft_check_prog(*head, parmlist[0], -1)))
 		{
 			pid = fork();
 			if (pid != 0)
 				wait(NULL);
-			if (pid == 0)
-			{
-				printf("i am in cheild prosses\n");
-				if (execve(path, parmlist, env) == -1)
-				{
-					ft_putendl("Permission Denied.\n");
-				}
-				ft_strdel(&path);
-				ft_bonus_freedoubledem(parmlist);
-			}
+			if ((pid == 0) && (execve(path, parmlist, env) == -1))
+				ft_putendl("Permission Denied.\n");
 		}
 		ft_strdel(&path);
 		ft_bonus_freedoubledem(parmlist);
@@ -80,9 +70,7 @@ int			main(int ac, char **av, char **env)
 				exit(1);
 			}
 			if (strlen(line))
-			{
 				ft_read_line(line, &head, env);
-			}
 			ft_strdel(&line);
 			ft_putstr("$> ");
 		}

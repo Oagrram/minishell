@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include  "../../includes/minishell.h"
-
+#include "../../includes/minishell.h"
 
 t_env		*ft_remove_list(t_env **head, char *unset)
 {
