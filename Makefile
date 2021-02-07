@@ -6,7 +6,7 @@
 #    By: aymhabib <aymhabib@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/01/16 02:00:08 by aymhabib          #+#    #+#              #
-#    Updated: 2020/12/28 15:40:10 by oagrram          ###   ########.fr        #
+#    Updated: 2021/02/05 16:46:36 by oagrram          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,6 @@ SRC= src/minishell.c \
 		src/builtins/ft_cd.c \
 		src/builtins/ft_echo.c \
 		src/builtins/ft_env.c \
-		src/builtins/ft_exit.c \
 		src/builtins/ft_setenv.c \
 		src/builtins/ft_unsetenv.c \
 

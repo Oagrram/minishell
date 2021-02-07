@@ -36,7 +36,6 @@ t_env				*ft_swith_data(char **env, int j);
 char				*ft_srch_in_list(t_env *p, char *found);
 int					ft_cd(t_env **head, char **line);
 void				ft_cd_dir(t_env **head, char *parm);
-char				*ft_srch_in_list(t_env *p, char *found);
 int					ft_check_expans(char **parmlist, t_env *env);
 int					ft_execut_builtins(char **line, t_env **head);
 char				*ft_check_prog(t_env *head, char *command, int i);

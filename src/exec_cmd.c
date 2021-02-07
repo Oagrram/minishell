@@ -22,12 +22,17 @@ char		*ft_check_prog(t_env *head, char *command, int i)
 	if (((command[0] == '.' || command[0] == '/') && access(command, F_OK)) ||
 	(!(path = ft_srch_in_list(head, "PATH")) || !ft_strcmp(path, "empty")))
 	{
+		ft_strdel(&path);
 		ft_putendl("Command not found.");
 		return (NULL);
 	}
-	else if ((command[0] == '.' || command[0] == '/') && !access(command, F_OK))
+	if ((command[0] == '.' || command[0] == '/') && !access(command, F_OK))
+	{
+		ft_strdel(&path);
 		return (command);
+	}
 	split = ft_strsplit(path, ':');
+	ft_strdel(&path);
 	while (split[++i])
 	{
 		path = ft_add_slach(split[i], command);

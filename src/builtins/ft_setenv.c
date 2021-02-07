@@ -66,6 +66,7 @@ void		ft_setenv(t_env *p, char **line)
 		while (p->next)
 			p = p->next;
 		p->next = ft_memalloc(sizeof(t_env));
+		p = p->next;
 		p->name = ft_strdup(line[1]);
 		if (line[2])
 			p->value = ft_strdup(line[2]);

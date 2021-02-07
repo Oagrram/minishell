@@ -58,7 +58,7 @@ char		*ft_srch_in_list(t_env *p, char *found)
 	}
 	if (found[0] == '$')
 		found = &found[1];
-	while (p->next)
+	while (p)
 	{
 		if (!(ft_strcmp(p->name, found)))
 		{

@@ -12,14 +12,14 @@
 
 #include "../../includes/minishell.h"
 
-t_env		*ft_remove_list(t_env **head, char *unset)
+void		ft_remove_list(t_env **head, char *unset)
 {
 	t_env	*p;
 	t_env	*prev;
 
 	p = *head;
 	prev = NULL;
-	while (p->next)
+	while (p)
 	{
 		if (!ft_strcmp(p->name, unset))
 		{
@@ -34,18 +34,20 @@ t_env		*ft_remove_list(t_env **head, char *unset)
 		prev = p;
 		p = p->next;
 	}
-	return (*head);
 }
 
 t_env		*ft_unsetenv(t_env **head, char **line)
 {
 	int		i;
+	char	*ret;
 
 	i = -1;
+	ret = NULL;
 	while (line[++i])
 	{
-		if (ft_srch_in_list(*head, line[i]) != NULL)
-			*head = ft_remove_list(head, line[i]);
+		if ((ret = ft_srch_in_list(*head, line[i])) != NULL)
+			ft_remove_list(head, line[i]);
+		ft_strdel(&ret);
 	}
 	return (*head);
 }

@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*   ft_bonus_freedoubledem.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oagrram <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: elfetoua <elfetoua@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/29 15:24:59 by oagrram           #+#    #+#             */
-/*   Updated: 2021/01/29 15:25:00 by oagrram          ###   ########.fr       */
+/*   Created: 2019/04/16 18:18:01 by elfetoua          #+#    #+#             */
+/*   Updated: 2019/04/16 18:21:21 by elfetoua         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "libft.h"
 
-int			ft_env(t_env *head)
+void	ft_bonus_freedoubledem(char **map)
 {
-	while (head)
+	int i;
+
+	i = 0;
+	while (map[i])
 	{
-		ft_putstr(head->name);
-		ft_putchar('=');
-		if (!head->value)
-			ft_putendl("");
-		else
-			ft_putendl(head->value);
-		head = head->next;
+		ft_strdel(&map[i]);
+		i++;
 	}
-	return (0);
+	free(map);
+	map = NULL;
 }

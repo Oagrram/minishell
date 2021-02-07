@@ -30,6 +30,8 @@ t_env		*ft_swith_data(char **env, int j)
 			p->value = NULL;
 		if (env[j + 1])
 			p->next = ft_memalloc(sizeof(t_env));
+		else
+			p->next = NULL;
 		p = p->next;
 		ft_bonus_freedoubledem(envline);
 	}
