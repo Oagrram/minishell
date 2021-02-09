@@ -18,6 +18,8 @@ t_env		*ft_swith_data(char **env, int j)
 	t_env	*head;
 	t_env	*p;
 
+	if (!env[0])
+		return (NULL);
 	p = ft_memalloc(sizeof(t_env));
 	head = p;
 	while (env[++j])

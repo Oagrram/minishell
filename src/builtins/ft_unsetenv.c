@@ -29,6 +29,8 @@ void		ft_remove_list(t_env **head, char *unset)
 				*head = p->next;
 			ft_strdel(&(p->name));
 			ft_strdel(&(p->value));
+			ft_memdel((void**)&(p));
+			printf("\nERROR\n");
 			break ;
 		}
 		prev = p;

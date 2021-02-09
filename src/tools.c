@@ -65,7 +65,7 @@ char		*ft_srch_in_list(t_env *p, char *found)
 			if (p->value)
 				return (ft_strdup(p->value));
 			else
-				return ("empty");
+				return (ft_strdup("empty"));
 		}
 		p = p->next;
 	}

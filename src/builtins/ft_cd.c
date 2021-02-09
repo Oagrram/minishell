@@ -23,6 +23,7 @@ void		ft_cd_old_pwd(t_env **head)
 		return ;
 	}
 	ft_cd_dir(head, oldpwd);
+	ft_strdel(&oldpwd);
 }
 
 void		ft_chang_value(t_env **head, char *value)
@@ -53,6 +54,7 @@ void		ft_cd_home(t_env **head)
 		return ;
 	}
 	ft_cd_dir(head, path);
+	ft_strdel(&path);
 }
 
 void		ft_cd_dir(t_env **head, char *parm)

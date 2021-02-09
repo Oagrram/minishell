@@ -53,7 +53,7 @@ int			ft_execut_builtins(char **line, t_env **head)
 		if (!line[1])
 			ft_env(*head);
 		else
-			ft_setenv(*head, line);
+			ft_setenv(head, line);
 	}
 	if (!ft_strcmp(line[0], "unsetenv") && check_line(line, 1, "unsetenv"))
 		*head = ft_unsetenv(head, line);

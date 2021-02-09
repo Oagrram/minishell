@@ -12,7 +12,25 @@
 
 #include "../includes/minishell.h"
 
-char		*ft_check_prog(t_env *head, char *command, int i)
+char		*ft_check_access(char **split, char *command)
+{
+	char	*path;
+	int		i;
+
+	i = -1;
+	path = NULL;
+	while (split[++i])
+	{
+		path = ft_add_slach(split[i], command);
+		if (!(access(path, F_OK)))
+			break ;
+		ft_strdel(&path);
+	}
+	ft_bonus_freedoubledem(split);
+	return (path);
+}
+
+char		*ft_check_prog(t_env *head, char *command)
 {
 	char	*path;
 	char	**split;
@@ -29,18 +47,11 @@ char		*ft_check_prog(t_env *head, char *command, int i)
 	if ((command[0] == '.' || command[0] == '/') && !access(command, F_OK))
 	{
 		ft_strdel(&path);
-		return (command);
+		return (ft_strdup(command));
 	}
 	split = ft_strsplit(path, ':');
 	ft_strdel(&path);
-	while (split[++i])
-	{
-		path = ft_add_slach(split[i], command);
-		if (!(access(path, F_OK)))
-			break ;
-		ft_strdel(&path);
-	}
-	ft_bonus_freedoubledem(split);
+	path = ft_check_access(split, command);
 	if (path == NULL)
 		ft_putendl("Command not found.");
 	return (path);

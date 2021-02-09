@@ -54,27 +54,39 @@ int			setenv_check(char **line)
 	return (1);
 }
 
-void		ft_setenv(t_env *p, char **line)
+void		ft_setenv(t_env **head, char **line)
 {
 	char	*ret;
+	t_env	*p;
 
 	ret = NULL;
+	p = *head;
 	if (!setenv_check(line))
 		return ;
-	if ((ret = ft_srch_in_list(p, line[1])) == NULL)
+	if ((ret = ft_srch_in_list(*head, line[1])) == NULL)
 	{
-		while (p->next)
-			p = p->next;
-		p->next = ft_memalloc(sizeof(t_env));
-		p = p->next;
-		p->name = ft_strdup(line[1]);
-		if (line[2])
-			p->value = ft_strdup(line[2]);
+		if (p != NULL)
+		{
+			while ((p)->next)
+				p = (p)->next;
+			(p)->next = ft_memalloc(sizeof(t_env));
+			p = (p)->next;
+		}
 		else
-			p->value = NULL;
+		{
+			*head = ft_memalloc(sizeof(t_env));
+			p = *head;
+		}
+		(p)->name = ft_strdup(line[1]);
+		if (line[2])
+			(p)->value = ft_strdup(line[2]);
+		else
+			(p)->value = NULL;
+		(p)->next = NULL;
 	}
 	else
 	{
-		add_val_list(p, line);
+		ft_strdel(&ret);
+		add_val_list(*head, line);
 	}
 }

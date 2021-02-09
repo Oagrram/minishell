@@ -38,11 +38,11 @@ int					ft_cd(t_env **head, char **line);
 void				ft_cd_dir(t_env **head, char *parm);
 int					ft_check_expans(char **parmlist, t_env *env);
 int					ft_execut_builtins(char **line, t_env **head);
-char				*ft_check_prog(t_env *head, char *command, int i);
+char				*ft_check_prog(t_env *head, char *command);
 char				*ft_add_slach(char *path, char *comand);
 int					ft_is_builtins(char *command);
 int					ft_check_acses(char *path);
-void				ft_setenv(t_env *p, char **line);
+void				ft_setenv(t_env **p, char **line);
 void				ft_echo(char **line);
 int					ft_env(t_env *head);
 
