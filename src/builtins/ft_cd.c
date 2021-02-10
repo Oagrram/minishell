@@ -31,7 +31,7 @@ void		ft_chang_value(t_env **head, char *value)
 	t_env *p;
 
 	p = *head;
-	while (p->next)
+	while (p && p->next)
 	{
 		if (!(ft_strcmp(p->name, "PWD")))
 		{

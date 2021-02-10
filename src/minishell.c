@@ -71,7 +71,6 @@ int			main(int ac, char **av, char **env)
 
 	av[0][0] = (char)ac;
 	head = ft_swith_data(env, -1);
-	printf("i am out of >> swith data");
 	ft_putstr("$> ");
 	while (1)
 	{
