@@ -12,6 +12,42 @@
 
 #include "../../includes/minishell.h"
 
+void		ft_chang_value(t_env **head, char *value, char *parm)
+{
+	t_env *p;
+
+	p = *head;
+	while (p && p->next)
+	{
+		if (!(ft_strcmp(p->name, "PWD")))
+		{
+			ft_strdel(&(p->value));
+			p->value = ft_strdup(value);
+		}
+		if (!(ft_strcmp(p->name, "OLDPWD")))
+		{
+			ft_strdel(&(p->value));
+			p->value = parm;
+		}
+		p = p->next;
+	}
+}
+
+void		ft_cd_dir(t_env **head, char *parm)
+{
+	char cwd[PATH_MAX];
+	char *oldpwd;
+
+	oldpwd = ft_strdup(getcwd(cwd, sizeof(cwd)));
+	if (ft_check_acses(parm))
+	{
+		ft_strdel(&oldpwd);
+		return ;
+	}
+	getcwd(cwd, sizeof(cwd));
+	ft_chang_value(head, cwd, oldpwd);
+}
+
 void		ft_cd_old_pwd(t_env **head)
 {
 	char	*oldpwd;
@@ -24,22 +60,6 @@ void		ft_cd_old_pwd(t_env **head)
 	}
 	ft_cd_dir(head, oldpwd);
 	ft_strdel(&oldpwd);
-}
-
-void		ft_chang_value(t_env **head, char *value)
-{
-	t_env *p;
-
-	p = *head;
-	while (p && p->next)
-	{
-		if (!(ft_strcmp(p->name, "PWD")))
-		{
-			ft_strdel(&(p->value));
-			p->value = ft_strdup(value);
-		}
-		p = p->next;
-	}
 }
 
 void		ft_cd_home(t_env **head)
@@ -55,16 +75,6 @@ void		ft_cd_home(t_env **head)
 	}
 	ft_cd_dir(head, path);
 	ft_strdel(&path);
-}
-
-void		ft_cd_dir(t_env **head, char *parm)
-{
-	char cwd[PATH_MAX];
-
-	if (ft_check_acses(parm))
-		return ;
-	getcwd(cwd, sizeof(cwd));
-	ft_chang_value(head, cwd);
 }
 
 int			ft_cd(t_env **head, char **line)

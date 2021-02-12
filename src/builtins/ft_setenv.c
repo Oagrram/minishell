@@ -58,22 +58,22 @@ void		fill_new_node(t_env *p, t_env **head, char **line)
 {
 	if (p != NULL)
 	{
-		while ((p)->next)
-			p = (p)->next;
-		(p)->next = ft_memalloc(sizeof(t_env));
-		p = (p)->next;
+		while (p->next)
+			p = p->next;
+		p->next = ft_memalloc(sizeof(t_env));
+		p = p->next;
 	}
 	else
 	{
 		*head = ft_memalloc(sizeof(t_env));
 		p = *head;
 	}
-	(p)->name = ft_strdup(line[1]);
+	p->name = ft_strdup(line[1]);
 	if (line[2])
-		(p)->value = ft_strdup(line[2]);
+		p->value = ft_strdup(line[2]);
 	else
-		(p)->value = NULL;
-	(p)->next = NULL;
+		p->value = NULL;
+	p->next = NULL;
 }
 
 void		ft_setenv(t_env **head, char **line)

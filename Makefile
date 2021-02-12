@@ -6,7 +6,7 @@
 #    By: aymhabib <aymhabib@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/01/16 02:00:08 by aymhabib          #+#    #+#              #
-#    Updated: 2021/02/05 16:46:36 by oagrram          ###   ########.fr        #
+#    Updated: 2021/02/11 15:37:29 by oagrram          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,5 +48,6 @@ clean:
 fclean: clean
 		make fclean -C libft
 		rm -f $(NAME)
+		rm -rf minishell.dSYM
 
 re: fclean all
